@@ -1,0 +1,13 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    container_name: music-catalogue
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password 
+      POSTGRES_DB: music-catalogue
+    volumes:
+      - /home/dodoko/Work/Dodo/Go/Go Project/Project/DB/music-catalogue:/var/lib/postgresql/data
