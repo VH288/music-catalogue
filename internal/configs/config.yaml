@@ -3,3 +3,6 @@ service:
   secretJWT: "supersecret"
 database:
   dataSourceName: "postgres://admin:password@localhost:5432/music-catalogue?sslmode=disable"
+spotifyConfig:
+  cliendID: "07d8552d81234a069f4aa76e7503da8b"
+  clientSecret: "5cb7c5facc1b41399ea9760dd2c31352"

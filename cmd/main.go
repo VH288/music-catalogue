@@ -2,12 +2,17 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/VH288/music-catalogue/internal/configs"
 	membershipsHandler "github.com/VH288/music-catalogue/internal/handler/memberships"
+	tracksHandler "github.com/VH288/music-catalogue/internal/handler/tracks"
 	"github.com/VH288/music-catalogue/internal/models/memberships"
 	membershipsRepo "github.com/VH288/music-catalogue/internal/repository/memberships"
+	"github.com/VH288/music-catalogue/internal/repository/spotify"
 	membershipsSvc "github.com/VH288/music-catalogue/internal/service/memberships"
+	"github.com/VH288/music-catalogue/internal/service/tracks"
+	"github.com/VH288/music-catalogue/pkg/httpclient"
 	"github.com/VH288/music-catalogue/pkg/internalsql"
 	"github.com/gin-gonic/gin"
 )
@@ -34,14 +39,18 @@ func main() {
 
 	db.AutoMigrate(&memberships.User{})
 
-	membershipRepo := membershipsRepo.NewRepository(db)
-
-	membershipSvc := membershipsSvc.NewService(cfg, membershipRepo)
-
 	r := gin.Default()
+	httpclient := httpclient.NewClient(&http.Client{})
 
+	membershipRepo := membershipsRepo.NewRepository(db)
+	membershipSvc := membershipsSvc.NewService(cfg, membershipRepo)
 	membershipHandler := membershipsHandler.NewHandler(r, membershipSvc)
 	membershipHandler.RegisterRoutes()
+
+	spotifyOutbound := spotify.NewSpotifyOutbound(cfg, httpclient)
+	trackSvc := tracks.NewService(spotifyOutbound)
+	tracksHandler := tracksHandler.NewHandler(r, trackSvc)
+	tracksHandler.RegisterRoutes()
 
 	r.Run(cfg.Service.Port)
 	_ = db
