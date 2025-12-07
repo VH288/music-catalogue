@@ -21,3 +21,20 @@ func (h *Handler) SignUp(c *gin.Context) {
 	}
 	c.Status(http.StatusCreated)
 }
+
+func (h *Handler) Login(c *gin.Context) {
+	var req memberships.LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	res, err := h.service.Login(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, memberships.LoginResponse{
+		AccessToken: res,
+	})
+}
