@@ -11,6 +11,7 @@ type SpotifyTrackObject struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
 	Explicit bool   `json:"explicit"`
+	IsLiked  *bool  `json:"is_liked"`
 	// album fields
 	AlbumName        string   `json:"album_name"`
 	AlbumType        string   `json:"album_type"`

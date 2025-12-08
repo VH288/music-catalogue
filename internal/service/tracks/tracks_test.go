@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/VH288/music-catalogue/internal/models/spotify"
+	"github.com/VH288/music-catalogue/internal/models/trackactivities"
 	spotifyRepo "github.com/VH288/music-catalogue/internal/repository/spotify"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -16,6 +17,9 @@ func Test_service_Search(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockSpotifyOutbound := NewMockspotifyOutbound(mockCtrl)
+	mockTrackActivityRepo := NewMocktrackActivitiesRepo(mockCtrl)
+
+	vtrue := true
 	type args struct {
 		query     string
 		pageSize  int
@@ -55,6 +59,7 @@ func Test_service_Search(t *testing.T) {
 						ArtistsName: []string{
 							"Ado",
 						},
+						IsLiked: &vtrue,
 					},
 				},
 			},
@@ -100,6 +105,13 @@ func Test_service_Search(t *testing.T) {
 						},
 					},
 				}, nil)
+
+				mockTrackActivityRepo.EXPECT().GetBulkSpotifyIDS(gomock.Any(), uint(1), []string{"7yQnZkAxSiAavC0zFRB1NI"}).
+					Return(map[string]trackactivities.TrackActivity{
+						"7yQnZkAxSiAavC0zFRB1NI": {
+							IsLiked: &vtrue,
+						},
+					}, nil)
 			},
 		},
 		{
@@ -120,9 +132,10 @@ func Test_service_Search(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockFn(tt.args)
 			s := &service{
-				spotifyOutbound: mockSpotifyOutbound,
+				spotifyOutbound:     mockSpotifyOutbound,
+				trackActivitiesRepo: mockTrackActivityRepo,
 			}
-			got, err := s.Search(context.Background(), tt.args.query, tt.args.pageSize, tt.args.pageIndex)
+			got, err := s.Search(context.Background(), tt.args.query, tt.args.pageSize, tt.args.pageIndex, 1)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("service.Search() error = %v, wantErr %v", err, tt.wantErr)
 			}

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/VH288/music-catalogue/internal/models/spotify"
+	"github.com/VH288/music-catalogue/pkg/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -53,7 +54,7 @@ func TestHandler_Seacrh(t *testing.T) {
 			},
 			wantErr: false,
 			mockFn: func() {
-				mockSvc.EXPECT().Search(gomock.Any(), "im invisible", 2, 1).Return(&spotify.SearchResponse{
+				mockSvc.EXPECT().Search(gomock.Any(), "im invisible", 2, 1, uint(1)).Return(&spotify.SearchResponse{
 					Total:  1,
 					Limit:  2,
 					Offset: 0,
@@ -84,7 +85,7 @@ func TestHandler_Seacrh(t *testing.T) {
 			expectedBody:       spotify.SearchResponse{},
 			wantErr:            true,
 			mockFn: func() {
-				mockSvc.EXPECT().Search(gomock.Any(), "im invisible", 2, 1).Return(nil, assert.AnError)
+				mockSvc.EXPECT().Search(gomock.Any(), "im invisible", 2, 1, uint(1)).Return(nil, assert.AnError)
 			},
 		},
 	}
@@ -104,6 +105,10 @@ func TestHandler_Seacrh(t *testing.T) {
 
 			req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 			assert.NoError(t, err)
+
+			token, err := jwt.CreateToken(uint(1), "username", "")
+			assert.NoError(t, err)
+			req.Header.Set("Authorization", token)
 
 			h.ServeHTTP(w, req)
 

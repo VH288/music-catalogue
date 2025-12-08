@@ -13,6 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	trackactivities "github.com/VH288/music-catalogue/internal/models/trackactivities"
 	spotify "github.com/VH288/music-catalogue/internal/repository/spotify"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -54,4 +55,86 @@ func (m *MockspotifyOutbound) Search(ctx context.Context, query string, limit, o
 func (mr *MockspotifyOutboundMockRecorder) Search(ctx, query, limit, offset any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockspotifyOutbound)(nil).Search), ctx, query, limit, offset)
+}
+
+// MocktrackActivitiesRepo is a mock of trackActivitiesRepo interface.
+type MocktrackActivitiesRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MocktrackActivitiesRepoMockRecorder
+	isgomock struct{}
+}
+
+// MocktrackActivitiesRepoMockRecorder is the mock recorder for MocktrackActivitiesRepo.
+type MocktrackActivitiesRepoMockRecorder struct {
+	mock *MocktrackActivitiesRepo
+}
+
+// NewMocktrackActivitiesRepo creates a new mock instance.
+func NewMocktrackActivitiesRepo(ctrl *gomock.Controller) *MocktrackActivitiesRepo {
+	mock := &MocktrackActivitiesRepo{ctrl: ctrl}
+	mock.recorder = &MocktrackActivitiesRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MocktrackActivitiesRepo) EXPECT() *MocktrackActivitiesRepoMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MocktrackActivitiesRepo) Create(ctx context.Context, model trackactivities.TrackActivity) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, model)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create.
+func (mr *MocktrackActivitiesRepoMockRecorder) Create(ctx, model any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MocktrackActivitiesRepo)(nil).Create), ctx, model)
+}
+
+// Get mocks base method.
+func (m *MocktrackActivitiesRepo) Get(ctx context.Context, userID uint, spotifyID string) (*trackactivities.TrackActivity, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ctx, userID, spotifyID)
+	ret0, _ := ret[0].(*trackactivities.TrackActivity)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MocktrackActivitiesRepoMockRecorder) Get(ctx, userID, spotifyID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MocktrackActivitiesRepo)(nil).Get), ctx, userID, spotifyID)
+}
+
+// GetBulkSpotifyIDS mocks base method.
+func (m *MocktrackActivitiesRepo) GetBulkSpotifyIDS(ctx context.Context, userID uint, spotifyIDs []string) (map[string]trackactivities.TrackActivity, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBulkSpotifyIDS", ctx, userID, spotifyIDs)
+	ret0, _ := ret[0].(map[string]trackactivities.TrackActivity)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBulkSpotifyIDS indicates an expected call of GetBulkSpotifyIDS.
+func (mr *MocktrackActivitiesRepoMockRecorder) GetBulkSpotifyIDS(ctx, userID, spotifyIDs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBulkSpotifyIDS", reflect.TypeOf((*MocktrackActivitiesRepo)(nil).GetBulkSpotifyIDS), ctx, userID, spotifyIDs)
+}
+
+// Update mocks base method.
+func (m *MocktrackActivitiesRepo) Update(ctx context.Context, model trackactivities.TrackActivity) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, model)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MocktrackActivitiesRepoMockRecorder) Update(ctx, model any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MocktrackActivitiesRepo)(nil).Update), ctx, model)
 }

@@ -8,8 +8,10 @@ import (
 	membershipsHandler "github.com/VH288/music-catalogue/internal/handler/memberships"
 	tracksHandler "github.com/VH288/music-catalogue/internal/handler/tracks"
 	"github.com/VH288/music-catalogue/internal/models/memberships"
+	"github.com/VH288/music-catalogue/internal/models/trackactivities"
 	membershipsRepo "github.com/VH288/music-catalogue/internal/repository/memberships"
 	"github.com/VH288/music-catalogue/internal/repository/spotify"
+	trackactivitiesRepo "github.com/VH288/music-catalogue/internal/repository/trackactivities"
 	membershipsSvc "github.com/VH288/music-catalogue/internal/service/memberships"
 	"github.com/VH288/music-catalogue/internal/service/tracks"
 	"github.com/VH288/music-catalogue/pkg/httpclient"
@@ -38,6 +40,7 @@ func main() {
 	}
 
 	db.AutoMigrate(&memberships.User{})
+	db.AutoMigrate(&trackactivities.TrackActivity{})
 
 	r := gin.Default()
 	httpclient := httpclient.NewClient(&http.Client{})
@@ -48,7 +51,8 @@ func main() {
 	membershipHandler.RegisterRoutes()
 
 	spotifyOutbound := spotify.NewSpotifyOutbound(cfg, httpclient)
-	trackSvc := tracks.NewService(spotifyOutbound)
+	trackActivityRepo := trackactivitiesRepo.NewRepository(db)
+	trackSvc := tracks.NewService(spotifyOutbound, trackActivityRepo)
 	tracksHandler := tracksHandler.NewHandler(r, trackSvc)
 	tracksHandler.RegisterRoutes()
 
